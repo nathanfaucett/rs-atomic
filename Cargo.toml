@@ -1,0 +1,16 @@
+[package]
+name = "atomic"
+version = "0.1.0"
+authors = ["nathanfaucett <nathanfaucett@gmail.com>"]
+
+keywords = ["atomic"]
+description = "atomic"
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/nathanfaucett/rs-atomic.git"
+homepage = "https://github.com/nathanfaucett/rs-atomic"
+
+[dependencies]
+[dev-dependencies]
+rng = {git = "https://github.com/nathanfaucett/rs-rng.git"}
+prng = {git = "https://github.com/nathanfaucett/rs-prng.git"}

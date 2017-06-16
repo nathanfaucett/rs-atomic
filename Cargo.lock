@@ -1,0 +1,24 @@
+[root]
+name = "atomic"
+version = "0.1.0"
+dependencies = [
+ "prng 0.1.0 (git+https://github.com/nathanfaucett/rs-prng.git)",
+ "rng 0.1.0 (git+https://github.com/nathanfaucett/rs-rng.git)",
+]
+
+[[package]]
+name = "prng"
+version = "0.1.0"
+source = "git+https://github.com/nathanfaucett/rs-prng.git#ce17641082164b5b1567de0560576a2af3e28485"
+dependencies = [
+ "rng 0.1.0 (git+https://github.com/nathanfaucett/rs-rng.git)",
+]
+
+[[package]]
+name = "rng"
+version = "0.1.0"
+source = "git+https://github.com/nathanfaucett/rs-rng.git#356735ea3ff6ab7aecd5d77e66a91f4c68914c3c"
+
+[metadata]
+"checksum prng 0.1.0 (git+https://github.com/nathanfaucett/rs-prng.git)" = "<none>"
+"checksum rng 0.1.0 (git+https://github.com/nathanfaucett/rs-rng.git)" = "<none>"
