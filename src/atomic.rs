@@ -1,6 +1,5 @@
 use alloc::boxed::Box;
 
-use core::ptr;
 use core::sync::atomic::AtomicPtr;
 
 pub use core::sync::atomic::Ordering;
@@ -31,7 +30,7 @@ impl<T> Atomic<T> {
     }
 
     #[inline(always)]
-    pub fn as_ptr(&self, order: Ordering) -> *mut T {
+    fn as_ptr(&self, order: Ordering) -> *mut T {
         self.ptr.load(order)
     }
     #[inline(always)]
@@ -52,9 +51,7 @@ impl<T> Atomic<T> {
         unsafe {
             let ptr = Box::into_raw(Box::new(value));
             let old_ptr = self.ptr.swap(ptr, order);
-            let old_value = ptr::read(old_ptr);
-            Box::from_raw(old_ptr);
-            old_value
+            *Box::from_raw(old_ptr)
         }
     }
     #[inline(always)]
@@ -98,6 +95,45 @@ mod test {
         let old_value = value.swap(Foo::new(1), Ordering::Relaxed);
         assert_eq!(old_value.bar, 0);
         assert_eq!(value.as_ref(Ordering::Relaxed).bar, 1);
+    }
+
+    #[test]
+    fn drop_test() {
+        static mut DROPPED: bool = false;
+
+        struct DroppableFoo {
+            bar: usize,
+        }
+
+        impl DroppableFoo {
+            fn new(bar: usize) -> Self {
+                DroppableFoo {
+                    bar: bar,
+                }
+            }
+        }
+
+        impl Drop for DroppableFoo {
+            fn drop(&mut self) {
+                unsafe {
+                    DROPPED = true;
+                }
+            }
+        }
+
+        {
+            assert_eq!(unsafe {DROPPED}, false);
+
+            let value = Atomic::new(DroppableFoo::new(0));
+            let old_value = value.swap(DroppableFoo::new(1), Ordering::Relaxed);
+
+            assert_eq!(unsafe {DROPPED}, false);
+
+            assert_eq!(old_value.bar, 0);
+            assert_eq!(value.as_ref(Ordering::Relaxed).bar, 1);
+        }
+
+        assert_eq!(unsafe {DROPPED}, true);
     }
 
     #[test]
